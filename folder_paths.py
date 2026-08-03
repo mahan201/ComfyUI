@@ -547,14 +547,12 @@ def get_save_image_path(filename_prefix: str, output_dir: str, image_width=0, im
     subfolder = os.path.dirname(os.path.normpath(filename_prefix))
     filename = os.path.basename(os.path.normpath(filename_prefix))
 
-    full_output_folder = os.path.join(output_dir, subfolder)
+    if subfolder.startswith("/"):
+        full_output_folder = subfolder
+    else:
+        full_output_folder = os.path.join(output_dir, subfolder)
 
-    if not is_within_directory(output_dir, full_output_folder):
-        err = "**** ERROR: Saving image outside the output folder is not allowed." + \
-              "\n full_output_folder: " + os.path.abspath(full_output_folder) + \
-              "\n         output_dir: " + output_dir
-        logging.error(err)
-        raise Exception(err)
+    print(f"SAVING {full_output_folder} / {filename}")
 
     try:
         counter = max(filter(lambda a: os.path.normcase(a[1][:-1]) == os.path.normcase(filename) and a[1][-1] == "_", map(map_filename, os.listdir(full_output_folder))))[0] + 1
